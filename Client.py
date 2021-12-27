@@ -1,28 +1,20 @@
-from struct import *
 import socket
-import random
+import time
 
-#from scapy.all import *
-#initialing the server
-my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+Client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 my_ip = '127.0.0.1'   #local computer
-my_socket.bind((my_ip,80))
-#to which network to connect
-#if(get_if_addr('eth1') is not null):
- #   my_ip_1= get_if_addr('eth1')
-#if(get_if_addr('eth2') is not null):
- #   my_ip_2 = get_if_addr('eth2')
-
-#my_socket.bind(('127.0.0.1', 12345))
+msg = "Hello UDP Server"
+#Client_socket.sendto(msg.encode("utf-8"),('127.0.0.1', 12345))
+#Client_socket.sendto(msg.encode("utf-8"),(my_ip, 12345)) #13117
+#Client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+# Enable broadcasting mode
+Client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+Client_socket.bind(("", 12345))
+print("Client started, listening for offer requests...")
 while True:
-    data, addr = my_socket.recvfrom(4096)
-    print(str(data))
-    message = "hello".encode("utf-8")
-    my_socket.sendto(message, addr)
+    data, addr = Client_socket.recvfrom(4096)
+    print("received message: %s"%data.decode('utf-8'))
 
-#num1=random.randint(0,4)
-#num2=random.randint(0,5)
 
-#print("Welcome to Quick Maths.\nPlayer 1: Instinct\nPlayer 2: Rocket\n==\nPlease answer the following question as fast as you can:\nHow much is "+str(num1)+"+"+str(num2)+"?")
+
 Client_socket.close()
