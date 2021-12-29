@@ -2,9 +2,13 @@ import socket
 import time
 from struct import *
 import sys
+import threading
 
 
 
+def get_input():
+        answer = sys.stdin.readline()[0]
+        client_tcp_socket.send(answer.encode('utf-8'))
 
 Client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 my_ip = '127.0.0.1'   #local computer
@@ -48,24 +52,28 @@ while True:
         print(game_directions.decode('utf-8'))
 
         #input for answer
-        answer = sys.stdin.readline()[0]
-        client_tcp_socket.send(answer.encode('utf-8'))
-
+        t_wait_for_input = threading.Thread(target= get_input,args=())
+        t_wait_for_input.start()
+       
+        #print finish answer
+        finish_answer = client_tcp_socket.recv(4096)
+        
+        print(finish_answer.decode('utf-8'))
         break
     except:
         pass
 
 #enter group name from keyboard
-enter_name_ask = client_tcp_socket.recv(4096)
-print(enter_name_ask.decode('utf-8'))
-group_name = input()
+#enter_name_ask = client_tcp_socket.recv(4096)
+#print(enter_name_ask.decode('utf-8'))
+#group_name = input()
 
 # sendin group name
-client_tcp_socket.send(group_name.encode('utf-8'))
+#client_tcp_socket.send(group_name.encode('utf-8'))
 
 #input for answer
-answer = sys.stdin.readline()[0]
-client_tcp_socket.send(answer.encode('utf-8'))
+#answer = sys.stdin.readline()[0]
+#client_tcp_socket.send(answer.encode('utf-8'))
 
 
 #Client_socket.close()
